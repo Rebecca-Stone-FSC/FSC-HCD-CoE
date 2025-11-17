@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Blueprint: FSC AI CoE Intake</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            max-width: 100%;
+            margin: 0 auto;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1a2140 0%, #2d3a5f 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header .icon {
+            font-size: 32px;
+            margin-right: 10px;
+        }
+        
+        .header .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e0e0e0;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+        }
+        
+        .legend-color {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        
+        .phases {
+            display: grid;
+            grid-template-columns: 180px repeat(9, 1fr);
+            background: #1a2140;
+            padding: 10px;
+            gap: 5px;
+        }
+        
+        .phase-spacer {
+            background: transparent;
+        }
+        
+        .phase {
+            background: #3d4a7c;
+            color: white;
+            padding: 12px 8px;
+            text-align: center;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 11px;
+        }
+        
+        .phase-name {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+        
+        .phase-duration {
+            display: block;
+            font-size: 10px;
+            opacity: 0.9;
+        }
+        
+        .swimlane {
+            display: contents;
+        }
+        
+        .swimlane-wrapper {
+            display: grid;
+            grid-template-columns: 180px repeat(9, 1fr);
+            border-bottom: 1px solid #ddd;
+            min-height: 100px;
+        }
+        
+        .swimlane-label {
+            padding: 15px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            color: white;
+        }
+        
+        .swimlane-content {
+            display: contents;
+        }
+        
+        .activity-wrapper {
+            padding: 10px 4px;
+            display: flex;
+            align-items: start;
+        }
+        
+        .activity {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            height: fit-content;
+            width: 100%;
+        }
+        
+        .activity-icon {
+            font-size: 22px;
+            margin-bottom: 6px;
+        }
+        
+        .activity-title {
+            font-weight: bold;
+            font-size: 11px;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+        
+        .activity-desc {
+            font-size: 10px;
+            color: #555;
+            line-height: 1.3;
+        }
+        
+        .activity-desc a {
+            color: #0760b3;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+        
+        .activity-desc a:hover {
+            color: #0d47a1;
+            text-decoration: underline;
+        }
+        
+        .activity-desc a:focus {
+            outline: 3px solid #0760b3;
+            outline-offset: 2px;
+        }
+        
+        .digital-touchpoints { background: #5242c7; }
+        .submitter-actions { background: #0760b3; }
+        .frontstage { background: #d6448f; }
+        .backstage { background: #2ebf91; }
+        .support-systems { background: #e4a811; }
+        
+        .optional {
+            border: 2px dashed #feca57 !important;
+            background: #fff9e6;
+        }
+        
+        .conditional {
+            border: 2px solid #00d2d3 !important;
+            background: #e6fffe;
+        }
+        
+        .empty-cell {
+            border: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
+        }
+        
+        .metrics {
+            padding: 25px;
+            background: #f8f9fa;
+        }
+        
+        .metrics h3 {
+            margin-bottom: 15px;
+            color: #1a2140;
+            font-size: 18px;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        
+        .metric-label {
+            font-size: 10px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        
+        .metric-value {
+            font-size: 26px;
+            font-weight: bold;
+            color: #1a2140;
+            margin-bottom: 4px;
+        }
+        
+        .metric-target {
+            font-size: 10px;
+            color: #27ae60;
+        }
+        
+        .stakeholders {
+            padding: 25px;
+            background: #fff9e6;
+        }
+        
+        .stakeholders h3 {
+            margin-bottom: 15px;
+            color: #1a2140;
+            font-size: 18px;
+        }
+        
+        .stakeholder-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .stakeholder-tag {
+            background: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .stakeholder-icon {
+            font-size: 14px;
+        }
+
+        /* Responsive adjustments */
+        @media screen and (max-width: 1400px) {
+            .phases {
+                font-size: 9px;
+            }
+            .activity-icon {
+                font-size: 18px;
+            }
+            .activity-title {
+                font-size: 9px;
+            }
+            .activity-desc {
+                font-size: 8px;
+            }
+        }
+
+        @media screen and (max-width: 1200px) {
+            .swimlane-wrapper {
+                grid-template-columns: 150px repeat(9, 1fr);
+            }
+            .phases {
+                grid-template-columns: 150px repeat(9, 1fr);
+            }
+            .activity-wrapper {
+                padding: 8px 3px;
+            }
+            .activity {
+                padding: 8px;
+            }
+        }
+
+        /* Skip to main content for keyboard users */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #000;
+            color: #fff;
+            padding: 8px;
+            text-decoration: none;
+            z-index: 100;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Service Blueprint Lines */
+        .blueprint-line {
+            display: grid;
+            grid-template-columns: 180px repeat(9, 1fr);
+            background: white;
+            border-top: 2px dashed #333;
+            border-bottom: 2px dashed #333;
+            padding: 8px 0;
+            margin: 0;
+        }
+
+        .blueprint-line-label {
+            padding: 0 15px;
+            font-weight: bold;
+            font-size: 11px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .blueprint-line-spacer {
+            grid-column: 2 / -1;
+        }
+
+        /* Key Insights Section */
+        .insights {
+            background: #f5f5f5;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .insights h3 {
+            grid-column: 1 / -1;
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .pain-points, .opportunities {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        
+        .pain-points h4 {
+            color: #e57373;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .opportunities h4 {
+            color: #81c784;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .pain-points ul, .opportunities ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .pain-points li, .opportunities li {
+            padding: 6px 0 6px 25px;
+            position: relative;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        
+        .pain-points li::before {
+            content: '⚠️';
+            position: absolute;
+            left: 0;
+        }
+        
+        .opportunities li::before {
+            content: '✅';
+            position: absolute;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <div class="container" role="main" id="main-content">
+        <header class="header">
+            <h1><span class="icon" aria-hidden="true">💡</span> Service Blueprint: FSC AI CoE Intake</h1>
+            <p class="subtitle">Idea Submission & Use Case Development Process</p>
+            <p class="subtitle" style="font-size: 12px;">From Initial Concept to Approved Business, Operational & Technical Use Cases</p>
+        </header>
+        
+        <nav class="legend" aria-label="Blueprint legend">
+            <strong style="margin-right: 10px;">SWIMLANES</strong>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #5242c7;" aria-hidden="true"></div>
+                <span>Digital Touchpoints</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #0760b3;" aria-hidden="true"></div>
+                <span>Submitter Actions</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #d6448f;" aria-hidden="true"></div>
+                <span>Frontstage (Visible)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #2ebf91;" aria-hidden="true"></div>
+                <span>Backstage (Invisible)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #e4a811;" aria-hidden="true"></div>
+                <span>Support Systems</span>
+            </div>
+            
+            <strong style="margin: 0 10px;">SPECIAL INDICATORS</strong>
+            <div class="legend-item">
+                <div class="legend-color" style="border: 2px dashed #feca57; background: #fff9e6;" aria-hidden="true"></div>
+                <span>Optional Path</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="border: 2px solid #00d2d3; background: #e6fffe;" aria-hidden="true"></div>
+                <span>Conditional</span>
+            </div>
+        </nav>
+        
+        <section class="phases" aria-label="Process phases">
+            <div class="phase-spacer"></div>
+            <div class="phase">
+                <span class="phase-name" aria-label="Phase: Ideation">💭 IDEATION</span>
+                <span class="phase-duration">Day 0</span>
+            </div>
+            <div class="phase">
+                <span class="phase-name" aria-label="Phase: Pre-Intake (Optional)">📋 PRE-INTAKE</span>
+                <span class="phase-duration">Week 1-2</span>
+            </div>
+            <div class="phase">
+                <span class="phase-name" aria-label="Phase: Formal Submission">📝 SUBMISSION</span>
+                <span class="phase-duration">Day 1</span>
+            </div>
+            <div class="phase">
+                <span class="phase-name" aria-label="Phase: Initial Review">⭐ REVIEW</span>
+                <span class="phase-duration">Week 1</span>
+            </div>
+            <div class="phase">
+                <span class="phase-name" aria-label="Phase: Business Case Development">📊 BUSINESS</span>
+                <span class="phase-duration">Week 2-3</span>
+            </div>
+            <div class="phase">
+                <span class="phase-name" aria-label="Phase: Operational Case">⚙️ OPERATIONS</span>
+                <span class="phase-duration">Week 3-4</span>
+            </div>
+            <div class="phase">
+                <span class="phase-name" aria-label="Phase: Technical Case">🔧 TECHNICAL</span>
+                <span class="phase-duration">Week 4-5</span>
+            </div>
+            <div class="phase">
+                <span class="phase-name" aria-label="Phase: Final Approval">✅ APPROVAL</span>
+                <span class="phase-duration">Week 6</span>
+            </div>
+            <div class="phase">
+                <span class="phase-name" aria-label="Phase: Handoff">🚀 HANDOFF</span>
+                <span class="phase-duration">Week 6+</span>
+            </div>
+        </section>
+        
+        <!-- DIGITAL TOUCHPOINTS -->
+        <div class="swimlane-wrapper">
+            <div class="swimlane-label digital-touchpoints" role="heading" aria-level="2">
+                <span aria-label="Digital Touchpoints">🖥️ DIGITAL TOUCHPOINTS</span>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">🌐</div>
+                    <div class="activity-title">Idea Portal</div>
+                    <div class="activity-desc"><a href="https://www.nytimes.com" target="_blank" rel="noopener noreferrer">AI CoE SharePoint</a>, <a href="[URL_PLACEHOLDER_TEAMS_CHANNEL]" target="_blank" rel="noopener noreferrer">AI CoE Teams channel</a>, <a href="[URL_PLACEHOLDER_QUICK_START_GUIDE]" target="_blank" rel="noopener noreferrer">Quick Start Guide</a>, additional resources</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity optional">
+                    <div class="activity-icon" aria-hidden="true">📅</div>
+                    <div class="activity-title">Workshop Calendar</div>
+                    <div class="activity-desc">Schedule sessions (Optional)</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">📝</div>
+                    <div class="activity-title">Intake Form</div>
+                    <div class="activity-desc">Business case doc, problem statement, use case development</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">📧</div>
+                    <div class="activity-title">Status Email</div>
+                    <div class="activity-desc">Confirmation of receipt</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">📋</div>
+                    <div class="activity-title">Collab Docs</div>
+                    <div class="activity-desc">Business template, other collab docs (TBD)</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">🔧</div>
+                    <div class="activity-title">Process Map</div>
+                    <div class="activity-desc">Current vs future state</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">💻</div>
+                    <div class="activity-title">Tech Assessment</div>
+                    <div class="activity-desc">Architecture, tech eval</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">📊</div>
+                    <div class="activity-title">Decision Portal</div>
+                    <div class="activity-desc">Committee review</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">📄</div>
+                    <div class="activity-title" style="color: #c62828; font-weight: bold; background: #ffebee; padding: 4px; border-radius: 4px;">??? Name TBD</div>
+                    <div class="activity-desc">Approved doc, next steps</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SUBMITTER ACTIONS -->
+        <div class="swimlane-wrapper">
+            <div class="swimlane-label submitter-actions" role="heading" aria-level="2">
+                <span aria-label="Submitter Actions">👤 SUBMITTER ACTIONS</span>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">💡</div>
+                    <div class="activity-title">Has Idea</div>
+                    <div class="activity-desc">Identifies problem or opportunity</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity optional">
+                    <div class="activity-icon" aria-hidden="true">👨‍🏫</div>
+                    <div class="activity-title">Requests Help</div>
+                    <div class="activity-desc">Optional workshop</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">📤</div>
+                    <div class="activity-title">Submits Idea</div>
+                    <div class="activity-desc">Via <a href="[URL_PLACEHOLDER_SHAREPOINT]" target="_blank" rel="noopener noreferrer">SharePoint</a>, <a href="/cdn-cgi/l/email-protection#82d9c7cfc3cbceddd2cec3c1c7cacdcec6c7d0df" target="_blank" rel="noopener noreferrer">VA FSC AI CoE email</a></div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">⏳</div>
+                    <div class="activity-title">Awaits Feedback</div>
+                    <div class="activity-desc">Receives initial response from AI CoE</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity conditional">
+                    <div class="activity-icon" aria-hidden="true">💼</div>
+                    <div class="activity-title">Co-Develops</div>
+                    <div class="activity-desc">Works on ROI, metrics, other impact analysis</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">📧</div>
+                    <div class="activity-title">Maps Ops</div>
+                    <div class="activity-desc">Defines touchpoints, impact <span style="color: #c62828; font-weight: bold;">(Note: clarify)</span></div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">🔍</div>
+                    <div class="activity-title">Tech Consult</div>
+                    <div class="activity-desc">Reviews technical feasibility</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">🔑</div>
+                    <div class="activity-title">Presents</div>
+                    <div class="activity-desc">Final presentation (PowerPoint) + Q&A</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">🎉</div>
+                    <div class="activity-title">Approved</div>
+                    <div class="activity-desc">Green light for development</div>
+                </div>
+            </div>
+        </div>
+        
+        
+        <!-- LINE OF INTERACTION -->
+        <div class="blueprint-line">
+            <div class="blueprint-line-label">— Line of Interaction —</div>
+            <div class="blueprint-line-spacer"></div>
+        </div>
+        
+        <!-- FRONTSTAGE (VISIBLE) -->
+        <div class="swimlane-wrapper">
+            <div class="swimlane-label frontstage" role="heading" aria-level="2">
+                <span aria-label="Frontstage Visible">👁️ FRONTSTAGE</span>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">📢</div>
+                    <div class="activity-title">Promotes AI CoE Portal</div>
+                    <div class="activity-desc">AI CoE office hours, PMD briefings, <a href="[URL_PLACEHOLDER_SHAREPOINT_UPDATES]" target="_blank" rel="noopener noreferrer">SharePoint updates</a></div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity optional">
+                    <div class="activity-icon" aria-hidden="true">🎓</div>
+                    <div class="activity-title">Facilitates</div>
+                    <div class="activity-desc">Problem statement framing and use case development workshop</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">✅</div>
+                    <div class="activity-title">Confirms</div>
+                    <div class="activity-desc">Email</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">📞</div>
+                    <div class="activity-title">Schedules</div>
+                    <div class="activity-desc">Kickoff with SMEs</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">💼</div>
+                    <div class="activity-title">Builds Case</div>
+                    <div class="activity-desc">KPIs, financial backing, exec sponsorship/champion</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">📋</div>
+                    <div class="activity-title">Documents</div>
+                    <div class="activity-desc">As-is/to-be</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">🔨</div>
+                    <div class="activity-title">Designs</div>
+                    <div class="activity-desc">Architecture, HCD/HCAI, tech</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">👥</div>
+                    <div class="activity-title">Committee</div>
+                    <div class="activity-desc">Reviews pending use cases</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">🤝</div>
+                    <div class="activity-title">Hands Off</div>
+                    <div class="activity-desc">Transitions to development team</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- LINE OF VISIBILITY -->
+        <div class="blueprint-line">
+            <div class="blueprint-line-label">— Line of Visibility —</div>
+            <div class="blueprint-line-spacer"></div>
+        </div>
+        
+        
+        <!-- BACKSTAGE (INVISIBLE) -->
+        <div class="swimlane-wrapper">
+            <div class="swimlane-label backstage" role="heading" aria-level="2">
+                <span aria-label="Backstage Invisible">🔒 BACKSTAGE</span>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">📊</div>
+                    <div class="activity-title">Tracks Metrics</div>
+                    <div class="activity-desc">Traffic, usage, searches</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity optional">
+                    <div class="activity-icon" aria-hidden="true">📋</div>
+                    <div class="activity-title">Documents</div>
+                    <div class="activity-desc">Workshop outcomes</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">🔍</div>
+                    <div class="activity-title">Triages</div>
+                    <div class="activity-desc">Priority, feasibility</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">🔍</div>
+                    <div class="activity-title">Checks</div>
+                    <div class="activity-desc">Duplicates, backlog, <a href="[URL_PLACEHOLDER_AI_IDEAS_PORTAL]" target="_blank" rel="noopener noreferrer">AI ideas portal</a>, submitted use cases</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">🔥</div>
+                    <div class="activity-title">Models</div>
+                    <div class="activity-desc">TBD</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">📝</div>
+                    <div class="activity-title">Discussions</div>
+                    <div class="activity-desc">SMEs, product/program owners, business analysts</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">🔒</div>
+                    <div class="activity-title">Assesses</div>
+                    <div class="activity-desc">Security, privacy, compliance</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">📦</div>
+                    <div class="activity-title">Compiles</div>
+                    <div class="activity-desc">All docs + exec summary</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">📁</div>
+                    <div class="activity-title">Archives</div>
+                    <div class="activity-desc"><a href="[URL_PLACEHOLDER_KNOWLEDGE_BASE]" target="_blank" rel="noopener noreferrer">Knowledge base</a></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- LINE OF INTERNAL INTERACTION -->
+        <div class="blueprint-line">
+            <div class="blueprint-line-label">— Line of Internal Interaction —</div>
+            <div class="blueprint-line-spacer"></div>
+        </div>
+        
+        
+        <!-- SUPPORT SYSTEMS -->
+        <div class="swimlane-wrapper">
+            <div class="swimlane-label support-systems" role="heading" aria-level="2">
+                <span aria-label="Support Systems">⚙️ SUPPORT SYSTEMS</span>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">🌐</div>
+                    <div class="activity-title">Portal</div>
+                    <div class="activity-desc"><a href="[URL_PLACEHOLDER_SHAREPOINT_EMAIL]" target="_blank" rel="noopener noreferrer">SharePoint</a>, forms, <a href="[URL_PLACEHOLDER_POWER_APPS]" target="_blank" rel="noopener noreferrer">Power Apps</a></div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity optional">
+                    <div class="activity-icon" aria-hidden="true">📅</div>
+                    <div class="activity-title">Scheduling</div>
+                    <div class="activity-desc">Microsoft Outlook</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">📂</div>
+                    <div class="activity-title">Tracking</div>
+                    <div class="activity-desc"><a href="[URL_PLACEHOLDER_AGILITY]" target="_blank" rel="noopener noreferrer">Agility</a></div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">💬</div>
+                    <div class="activity-title">Collaboration</div>
+                    <div class="activity-desc">MS Teams, SharePoint, Teams meetings</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">📊</div>
+                    <div class="activity-title" style="color: #c62828; font-weight: bold; background: #ffebee; padding: 4px; border-radius: 4px;">Financial (?)</div>
+                    <div class="activity-desc" style="color: #c62828; font-weight: bold;">Excel models, Power BI</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">🗺️</div>
+                    <div class="activity-title" style="color: #c62828; font-weight: bold; background: #ffebee; padding: 4px; border-radius: 4px;">Process Mining (?)</div>
+                    <div class="activity-desc" style="color: #c62828; font-weight: bold;">TBD (Is this needed?)</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">💻</div>
+                    <div class="activity-title">Tech Stack</div>
+                    <div class="activity-desc" style="color: #c62828; font-weight: bold;">Enterprise apps, APIs (Any others?)</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">📋</div>
+                    <div class="activity-title">Decision Log</div>
+                    <div class="activity-desc">Voting</div>
+                </div>
+            </div>
+            <div class="activity-wrapper">
+                <div class="activity">
+                    <div class="activity-icon" aria-hidden="true">📚</div>
+                    <div class="activity-title">Knowledge Base</div>
+                    <div class="activity-desc">Document storage, <a href="[URL_PLACEHOLDER_AI_COE_SHAREPOINT]" target="_blank" rel="noopener noreferrer">AI CoE SharePoint</a></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- KEY PROCESS METRICS -->
+        <section class="metrics">
+            <h3>📈 Key Process Metrics</h3>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Time-to-Idea to Approval</div>
+                    <div class="metric-value">6 weeks (?)</div>
+                    <div class="metric-target">Target: TBD</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Pre-Intake Workshop Adoption</div>
+                    <div class="metric-value">TBD%</div>
+                    <div class="metric-target">Target: TBD%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">First-Time Approval Rate</div>
+                    <div class="metric-value">TBD%</div>
+                    <div class="metric-target">Target: TBD%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Ideas Submitted (YTD)</div>
+                    <div class="metric-value">TBD</div>
+                    <div class="metric-target">Target: TBD/year</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Submitter Satisfaction</div>
+                    <div class="metric-value">TBD</div>
+                    <div class="metric-target">Target: 4.0/5</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Ideas Reaching Execution</div>
+                    <div class="metric-value">TBD%</div>
+                    <div class="metric-target">Target: TBD%</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- KEY STAKEHOLDERS & ROLES -->
+        <section class="stakeholders">
+            <h3>👥 Key Stakeholders & Roles</h3>
+            <div class="stakeholder-grid">
+                <div class="stakeholder-tag">
+                    <span class="stakeholder-icon" aria-hidden="true">💡</span>
+                    <span>Idea Submitters (Anyone in org)</span>
+                </div>
+                <div class="stakeholder-tag">
+                    <span class="stakeholder-icon" aria-hidden="true">👨‍🏫</span>
+                    <span>Workshop Facilitators</span>
+                </div>
+                <div class="stakeholder-tag">
+                    <span class="stakeholder-icon" aria-hidden="true">📋</span>
+                    <span>Intake Coordinator</span>
+                </div>
+                <div class="stakeholder-tag">
+                    <span class="stakeholder-icon" aria-hidden="true">📊</span>
+                    <span>Business Analysts (?)</span>
+                </div>
+                <div class="stakeholder-tag">
+                    <span class="stakeholder-icon" aria-hidden="true">⚙️</span>
+                    <span>Operations Specialists</span>
+                </div>
+                <div class="stakeholder-tag">
+                    <span class="stakeholder-icon" aria-hidden="true">🏗️</span>
+                    <span>Solutions Architects</span>
+                </div>
+                <div class="stakeholder-tag">
+                    <span class="stakeholder-icon" aria-hidden="true" style="background: linear-gradient(135deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3); border-radius: 50%; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center;">👤</span>
+                    <span>HCD/HCAI</span>
+                </div>
+                <div class="stakeholder-tag">
+                    <span class="stakeholder-icon" aria-hidden="true">🔒</span>
+                    <span>Security/Compliance Team</span>
+                </div>
+                <div class="stakeholder-tag">
+                    <span class="stakeholder-icon" aria-hidden="true">🔐</span>
+                    <span>Privacy/Compliance Team</span>
+                </div>
+                <div class="stakeholder-tag">
+                    <span class="stakeholder-icon" aria-hidden="true">🏢</span>
+                    <span>Innovation Committee</span>
+                </div>
+                <div class="stakeholder-tag">
+                    <span class="stakeholder-icon" aria-hidden="true">👨‍💼</span>
+                    <span>Project Managers (Delivery)</span>
+                </div>
+                <div class="stakeholder-tag">
+                    <span class="stakeholder-icon" aria-hidden="true">💰</span>
+                    <span>Financial Representative</span>
+                </div>
+                <div class="stakeholder-tag">
+                    <span class="stakeholder-icon" aria-hidden="true">👔</span>
+                    <span>Executive Sponsors/Champions</span>
+                </div>
+            </div>
+              
+        <!-- PAIN POINTS & OPPORTUNITIES -->
+        <section class="insights">
+            <h3>💡 Key Insights</h3>
+            <div class="pain-points">
+                <h4>⚠️ Pain Points</h4>
+                <ul>
+                    <li>LTTE charge code forgotten (halts at FTS)</li>
+                    <li>Business case perfectionism (paralysis)</li>
+                    <li>AI vs. Automation confusion</li>
+                    <li>Missing business sponsorship</li>
+                    <li>Unclear collaboration phase deliverables</li>
+                </ul>
+            </div>
+            <div class="opportunities">
+                <h4>✅ Opportunities</h4>
+                <ul>
+                    <li>Build LTTE reminder system</li>
+                    <li>Create AI vs. Automation guidance</li>
+                    <li>Develop collaboration phase checklist</li>
+                    <li>Add status dashboard for submitters</li>
+                    <li>Implement automated notifications</li>
+                </ul>
+            </div>
+        </section>
+        
+    </div>
+</body>
+</html>
