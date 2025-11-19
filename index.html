@@ -1,3 +1,74 @@
+<!--
+*******************************************************************************
+VA FSC AI COE INTAKE PROCESS SERVICE BLUEPRINT
+*******************************************************************************
+
+FILE: blueprint_inline_labels.html
+PURPOSE: Interactive service blueprint documenting the 9-phase FSC AI CoE 
+         intake process from ideation through handoff
+CREATED: November 2025
+VERSION: 2.0 (with inline separator labels)
+
+STRUCTURE:
+- 9 Process Phases (Ideation > Pre-Intake > Submission > Review > Business Operations > Technical > Approval > Handoff)
+- 5 Swimlanes (Digital Touchpoints, Submitter Actions, Frontstage Visible, 
+  Backstage Invisible, Support Systems)
+- 3 Service Blueprint Lines (Line of Interaction, Line of Visibility, 
+  Line of Internal Interaction)
+
+COMPLIANCE:
+- Section 508 compliant
+- WCAG AA/AAA accessible
+- Keyboard navigable
+- Screen reader compatible
+- Proper color contrast ratios
+
+USAGE:
+- Self-contained HTML file (no external dependencies)
+- Works in secure environments
+- Can be opened directly in any modern web browser
+- Printable and shareable
+
+FOR DOCUMENTATION:
+- See README.txt for project overview
+- See ACCESSIBILITY.txt for detailed compliance information
+*******************************************************************************
+-->
+
+<!--
+*******************************************************************************
+VA FSC AI COE INTAKE PROCESS SERVICE BLUEPRINT
+*******************************************************************************
+
+FILE: blueprint_inline_labels.html
+PURPOSE: Interactive service blueprint documenting the 9-phase FSC AI CoE 
+         intake process from ideation through handoff
+CREATED: November 2025
+VERSION: 2.0 (with inline separator labels)
+
+STRUCTURE:
+- 9 Process Phases (Ideation > Pre-Intake > Submission > Review > Business > 
+  Operations > Technical > Approval > Handoff)
+- 5 Swimlanes (Digital Touchpoints, Submitter Actions, Frontstage Visible, 
+  Backstage Invisible, Support Systems)
+- 3 Service Blueprint Lines (Line of Interaction, Line of Visibility, 
+  Line of Internal Interaction)
+
+COMPLIANCE:
+- Section 508 compliant
+- WCAG AA/AAA accessible
+- Keyboard navigable
+- Screen reader compatible
+- Proper color contrast ratios
+
+USAGE:
+- Self-contained HTML file (no external dependencies)
+- Works in secure environments
+- Can be opened directly in any modern web browser
+- Printable and shareable
+
+*******************************************************************************
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +76,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Service Blueprint: FSC AI CoE Intake</title>
     <style>
+        /* =====================================================================
+           CSS STYLES FOR FSC AI COE INTAKE SERVICE BLUEPRINT
+           ===================================================================== */
+        
+        /* ---------------------------------------------------------------------
+           GLOBAL RESET & BASE STYLES
+           --------------------------------------------------------------------- */
+        
+        /* Reset default browser styles for consistency across all browsers */
         * {
             margin: 0;
             padding: 0;
@@ -328,28 +408,28 @@
 
         /* Service Blueprint Lines */
         .blueprint-line {
-            display: grid;
-            grid-template-columns: 180px repeat(9, 1fr);
-            background: white;
-            border-top: 2px dashed #333;
-            border-bottom: 2px dashed #333;
-            padding: 8px 0;
+            display: block;
+            width: 100%;
             margin: 0;
+            position: relative;
+            height: 2px;
+            background: #666;
         }
 
-        .blueprint-line-label {
-            padding: 0 15px;
-            font-weight: bold;
+        .blueprint-line::before {
+            content: attr(data-label);
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 0 20px;
             font-size: 11px;
-            color: #333;
-            display: flex;
-            align-items: center;
+            font-weight: bold;
+            color: #666;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .blueprint-line-spacer {
-            grid-column: 2 / -1;
+            letter-spacing: 1px;
+            white-space: nowrap;
         }
 
         /* Key Insights Section */
@@ -505,7 +585,7 @@
                 <div class="activity">
                     <div class="activity-icon" aria-hidden="true">🌐</div>
                     <div class="activity-title">Idea Portal</div>
-                    <div class="activity-desc"><a href="https://www.nytimes.com" target="_blank" rel="noopener noreferrer">AI CoE SharePoint</a>, <a href="https://teams.microsoft.com/l/channel/19%3AR9ILiMB6RrG_TjJ3xH9RzFChH1AXJOBUO4MlafI-Bj01%40thread.tacv2/FSC%20AI%20Center%20of%20Excellence%20(CoE)?groupId=d852789a-921d-423c-aefd-1b3f816a03eb&tenantId=e95f1b23-abaf-45ee-821d-b7ab251ab3bf" target="_blank" rel="noopener noreferrer">AI CoE Teams channel</a>, <a href="https://dvagov.sharepoint.com/sites/FSCArtificialIntelligenceAIEnablement-FSCAICoE-PMsandKeyLeads/_layouts/15/Doc.aspx?sourcedoc=%7B89717750-0980-4D42-AE87-A1E743E8F5A8%7D&file=AI%20Quick-Start%20Guide%20-%20FSC%20AI%20CoE%20-%20Final%20-%20250923v1.0.pptx&action=edit&mobileredirect=true&DefaultItemOpen=1" target="_blank" rel="noopener noreferrer">Quick Start Guide</a>, additional resources</div>
+                    <div class="activity-desc"><a href="https://www.nytimes.com" target="_blank" rel="noopener noreferrer">AI CoE SharePoint</a>, <a href="[URL_PLACEHOLDER_TEAMS_CHANNEL]" target="_blank" rel="noopener noreferrer">AI CoE Teams channel</a>, <a href="[URL_PLACEHOLDER_QUICK_START_GUIDE]" target="_blank" rel="noopener noreferrer">Quick Start Guide</a>, additional resources</div>
                 </div>
             </div>
             <div class="activity-wrapper">
@@ -638,10 +718,7 @@
         
         
         <!-- LINE OF INTERACTION -->
-        <div class="blueprint-line">
-            <div class="blueprint-line-label">— Line of Interaction —</div>
-            <div class="blueprint-line-spacer"></div>
-        </div>
+        <div class="blueprint-line" data-label="— Line of Interaction —" role="separator" aria-label="Line of Interaction"></div>
         
         <!-- FRONTSTAGE (VISIBLE) -->
         <div class="swimlane-wrapper">
@@ -714,10 +791,7 @@
         </div>
         
         <!-- LINE OF VISIBILITY -->
-        <div class="blueprint-line">
-            <div class="blueprint-line-label">— Line of Visibility —</div>
-            <div class="blueprint-line-spacer"></div>
-        </div>
+        <div class="blueprint-line" data-label="— Line of Visibility —" role="separator" aria-label="Line of Visibility"></div>
         
         
         <!-- BACKSTAGE (INVISIBLE) -->
@@ -791,10 +865,7 @@
         </div>
         
         <!-- LINE OF INTERNAL INTERACTION -->
-        <div class="blueprint-line">
-            <div class="blueprint-line-label">— Line of Internal Interaction —</div>
-            <div class="blueprint-line-spacer"></div>
-        </div>
+        <div class="blueprint-line" data-label="— Line of Internal Interaction —" role="separator" aria-label="Line of Internal Interaction"></div>
         
         
         <!-- SUPPORT SYSTEMS -->
@@ -806,7 +877,7 @@
                 <div class="activity">
                     <div class="activity-icon" aria-hidden="true">🌐</div>
                     <div class="activity-title">Portal</div>
-                    <div class="activity-desc"><a href="[URL_PLACEHOLDER_SHAREPOINT_EMAIL]" target="_blank" rel="noopener noreferrer">SharePoint</a>, forms, <a href="https://apps.gov.powerapps.us/play/e/default-e95f1b23-abaf-45ee-821d-b7ab251ab3bf/a/acea03a7-cbcd-4a2b-8554-c7c9a25d1dbc?tenantId=e95f1b23-abaf-45ee-821d-b7ab251ab3bf&hint=25021ef6-9afd-49eb-b24b-b781225cf2c2&source=sharebutton&sourcetime=1763479643503#" target="_blank" rel="noopener noreferrer">Power Apps</a></div>
+                    <div class="activity-desc"><a href="[URL_PLACEHOLDER_SHAREPOINT_EMAIL]" target="_blank" rel="noopener noreferrer">SharePoint</a>, forms, <a href="[URL_PLACEHOLDER_POWER_APPS]" target="_blank" rel="noopener noreferrer">Power Apps</a></div>
                 </div>
             </div>
             <div class="activity-wrapper">
@@ -820,7 +891,7 @@
                 <div class="activity">
                     <div class="activity-icon" aria-hidden="true">📂</div>
                     <div class="activity-title">Tracking</div>
-                    <div class="activity-desc"><a href="https://www1.dfrhost.com/va-fsc-gov/PlanningRoom.mvc/Show/1692674" target="_blank" rel="noopener noreferrer">Agility</a></div>
+                    <div class="activity-desc"><a href="[URL_PLACEHOLDER_AGILITY]" target="_blank" rel="noopener noreferrer">Agility</a></div>
                 </div>
             </div>
             <div class="activity-wrapper">
@@ -990,3 +1061,4 @@
     </div>
 </body>
 </html>
+
